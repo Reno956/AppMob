@@ -8,12 +8,57 @@
 
     <TextView
         android:id="@+id/textViewPrueba"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World"
+        android:layout_width="256dp"
+        android:layout_height="75dp"
+        android:padding="8dp"
+        android:text="Contacts App"
+
+        android:textAlignment="center"
+        android:textSize="34sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.042" />
+
+    <ImageView
+        android:layout_width="159dp"
+        android:layout_height="136dp"
+        android:layout_marginTop="124dp"
+        android:src="@drawable/calendar"
+        app:layout_constraintEnd_toEndOf="@+id/textViewPrueba"
+        app:layout_constraintStart_toStartOf="@+id/textViewPrueba"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPrueba" />
+
+    <Button
+        android:id="@+id/buttonBuy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="508dp"
+        android:text="@string/buttonBuy"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonPricing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="508dp"
+        android:text="@string/buttonPricing"
+        app:layout_constraintStart_toEndOf="@+id/buttonBuy"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="508dp"
+        android:text="@string/buttonDetails"
+        app:layout_constraintStart_toEndOf="@+id/buttonPricing"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
