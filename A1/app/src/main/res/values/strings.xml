@@ -3,4 +3,6 @@
     <string name="buttonBuy">BUY NOW</string>
     <string name="buttonPricing">PRICING</string>
     <string name="buttonDetails">DETAILS</string>
+    <string name="txtActionBar">HOME</string>
+    <string name="txtActionBar1">WELLCOME</string>
 </resources>
