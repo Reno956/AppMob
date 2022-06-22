@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">CazarPatos</string>
+    <string name="textEmail">Escribe tu Email</string>
+    <string name="textClave">Escribe tu Clave</string>
+    <string name="textRecordar">Recordarme</string>
+    <string name="textIniciar">Iniciar juego</string>
+    <string name="textNuevoUsuario">Nuevo Usuario</string>
+
+</resources>
