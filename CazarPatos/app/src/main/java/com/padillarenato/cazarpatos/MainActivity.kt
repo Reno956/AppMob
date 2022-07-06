@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
         imageViewPato.setX(randomX.toFloat())
         imageViewPato.setY(randomY.toFloat())
     }
-    
+
     var contadorTiempo = object : CountDownTimer(10000, 1000) {
         override fun onTick(millisUntilFinished: Long) {
             val segundosRestantes = millisUntilFinished / 1000
