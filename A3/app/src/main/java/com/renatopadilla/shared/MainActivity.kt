@@ -3,10 +3,12 @@ package com.renatopadilla.shared
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.widget.TextView
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import com.renatopadilla.shared.storage.FileExternalManager
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
@@ -34,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 
         val textViewSaludo = findViewById<TextView>(R.id.textViewSaludo)
         textViewSaludo.text = sharedPref.getString("clave13",-1).toString()
-*/
+
         val masterKeyAlias: String = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
         val sharedPreferences = EncryptedSharedPreferences.create(
             "secret_shared_prefs",
@@ -51,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         editor3.apply();//o commit()
         val textViewSaludo = findViewById<TextView>(R.id.textViewSaludo)
         textViewSaludo.text = sharedPreferences.getInt("clave13",-1).toString()
-/*
+
         val fichero = "fichero.txt"
         val texto = "texto\nalmacenado"
         val fos: FileOutputStream
@@ -72,6 +74,10 @@ class MainActivity : AppCompatActivity() {
             val textViewSaludo = findViewById<TextView>(R.id.textViewSaludo)
             textViewSaludo.text = "$texto1 $texto2"
         }*/
+        Log.d("TAG", Environment.getExternalStorageDirectory().toString())
+        Log.d("TAG", this.getExternalFilesDir(null).toString())
+        FileExternalManager(this).SaveInformation()
+        FileExternalManager(this).ReadInformation()
     }
 
 }
