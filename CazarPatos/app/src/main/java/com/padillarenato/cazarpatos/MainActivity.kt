@@ -1,10 +1,14 @@
 package com.padillarenato.cazarpatos
 
+import android.content.Intent
 import android.media.MediaPlayer
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.CountDownTimer
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -32,7 +36,9 @@ class MainActivity : AppCompatActivity() {
         //Obtener el usuario de pantalla login
         val extras = intent.extras ?: return
         val usuario = extras.getString(EXTRA_LOGIN) ?: "Unknown"
-        textViewUsuario.setText(usuario)
+        val ind = subUser(usuario)
+        val newUser = usuario.subSequence(0,ind)
+        textViewUsuario.setText(newUser)
 
         //Determina el ancho y largo de pantalla
         inicializarPantalla()
@@ -53,6 +59,42 @@ class MainActivity : AppCompatActivity() {
             }, 500)
         }
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings1 -> {
+                reiniciarJuego()
+                return true
+            }
+            R.id.action_settings2 -> {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://duckhuntjs.com/")))
+                return true
+            }
+            R.id.action_settings3 -> {
+                finish()
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun subUser(email: String): Int {
+        val lastIndex = email.length - 1
+        var lastNumber = 0;
+        for (i in 0..lastIndex){
+            if(email.elementAt(i)=='@'){
+                lastNumber = i
+            }
+        }
+        return lastNumber
+    }
+
     private fun inicializarPantalla() {
         // 1. Obtenemos el tamaño de la pantalla del dispositivo
         val display = this.resources.displayMetrics
@@ -94,6 +136,7 @@ class MainActivity : AppCompatActivity() {
         builder
             .setMessage("Felicidades!!\nHas conseguido cazar $contador patos")
             .setTitle("Fin del juego")
+            .setIcon(R.drawable.duck)
             .setPositiveButton("Reiniciar",
                 { _, _ ->
                     reiniciarJuego()
@@ -101,6 +144,7 @@ class MainActivity : AppCompatActivity() {
             .setNegativeButton("Cerrar",
                 { _, _ ->
                     //dialog.dismiss()
+                    finish()
                 })
         builder.create().show()
     }

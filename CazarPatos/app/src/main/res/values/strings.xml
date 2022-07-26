@@ -5,5 +5,7 @@
     <string name="textRecordar">Recordarme</string>
     <string name="textIniciar">Iniciar juego</string>
     <string name="textNuevoUsuario">Nuevo Usuario</string>
-
+    <string name="action_settings1">Nuevo Juego</string>
+    <string name="action_settings2">Jugar Online</string>
+    <string name="action_settings3">Salir</string>
 </resources>

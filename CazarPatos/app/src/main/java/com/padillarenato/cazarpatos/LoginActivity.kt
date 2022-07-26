@@ -2,11 +2,14 @@ package com.padillarenato.cazarpatos
 
 import android.content.Intent
 import android.media.MediaPlayer
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Patterns
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
+import java.util.regex.Pattern
+
 
 class LoginActivity : AppCompatActivity() {
     lateinit var manejadorArchivo: FileHandler
@@ -75,6 +78,8 @@ class LoginActivity : AppCompatActivity() {
     private fun ValidarDatosRequeridos():Boolean{
         val email = editTextEmail.text.toString()
         val clave = editTextPassword.text.toString()
+        val pattern: Pattern = Patterns.EMAIL_ADDRESS
+
         if (email.isEmpty()) {
             editTextEmail.setError("El email es obligatorio")
             editTextEmail.requestFocus()
@@ -85,8 +90,13 @@ class LoginActivity : AppCompatActivity() {
             editTextPassword.requestFocus()
             return false
         }
-        if (clave.length < 3) {
-            editTextPassword.setError("La clave debe tener al menos 3 caracteres")
+        if(!pattern.matcher(email).matches()){
+            editTextEmail.setError("Email no valido")
+            editTextEmail.requestFocus()
+            return false
+        }
+        if (clave.length < 8) {
+            editTextPassword.setError("La clave debe tener al menos 8 caracteres")
             editTextPassword.requestFocus()
             return false
         }
