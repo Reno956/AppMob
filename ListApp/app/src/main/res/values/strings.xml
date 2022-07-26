@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ListApp</string>
+    <string-array name="array_websites">
+        <item>https://www.epn.edu.ec</item>
+        <item>https://www.fis.epn.edu.ec</item>
+        <item>https://www.google.com</item>
+        <item>https://www.microsoft.com</item>
+    </string-array>
+</resources>
