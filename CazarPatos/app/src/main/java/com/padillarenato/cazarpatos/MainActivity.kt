@@ -144,7 +144,9 @@ class MainActivity : AppCompatActivity() {
             .setNegativeButton("Cerrar",
                 { _, _ ->
                     //dialog.dismiss()
-                    finish()
+                    //finish()
+                    val intencion = Intent(this, RankingActivity::class.java)
+                    startActivity(intencion)
                 })
         builder.create().show()
     }
