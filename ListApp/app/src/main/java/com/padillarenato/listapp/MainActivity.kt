@@ -19,7 +19,8 @@ class MainActivity : AppCompatActivity() {
             "https://www.microsoft.com"
         )
         listViewSitiosWeb = findViewById(R.id.listViewSitiosWeb)
-        listViewSitiosWeb.adapter = ArrayAdapter(this,R.layout.simple_list_item_p,resources.getStringArray(R.array.array_websites))
+        //listViewSitiosWeb.adapter = ArrayAdapter(this,R.layout.simple_list_item_p,resources.getStringArray(R.array.array_websites))
+        listViewSitiosWeb.adapter = SitiosWebAdaptador(resources.getStringArray(R.array.array_websites))
         listViewSitiosWeb.setOnItemClickListener { parent, view, position, id ->
             val intencion = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"))
             startActivity(intencion)
