@@ -6,8 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity2">
 
-
-
     <ImageView
         android:id="@+id/imageViewPicasso"
         android:layout_width="match_parent"
@@ -15,5 +13,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        tools:srcCompat="@tools:sample/avatars"
+        android:contentDescription="TODO" />
 </androidx.constraintlayout.widget.ConstraintLayout>
