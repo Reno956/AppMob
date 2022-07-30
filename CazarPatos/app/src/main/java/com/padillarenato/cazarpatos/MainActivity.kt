@@ -78,6 +78,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.action_settings3 -> {
                 finish()
+
                 return true
             }
             else -> super.onOptionsItemSelected(item)

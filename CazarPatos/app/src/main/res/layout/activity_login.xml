@@ -87,4 +87,16 @@
         app:layout_constraintStart_toStartOf="@+id/buttonLogin"
         app:layout_constraintTop_toBottomOf="@+id/buttonLogin" />
 
+    <ImageButton
+        android:id="@+id/imageButtomGoogle"
+        android:layout_width="77dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/google3"
+        android:background="#62ACFD"
+        app:layout_constraintEnd_toEndOf="@+id/buttonNewUser"
+        app:layout_constraintHorizontal_bias="0.525"
+        app:layout_constraintStart_toStartOf="@+id/buttonNewUser"
+        app:layout_constraintTop_toBottomOf="@+id/buttonNewUser" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
