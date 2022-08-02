@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "799894179259",
+    "firebase_url": "https://proyectocazarpatos-860fe-default-rtdb.firebaseio.com",
     "project_id": "proyectocazarpatos-860fe",
     "storage_bucket": "proyectocazarpatos-860fe.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "799894179259-h49k5k3bcuab3g6dfvqk67186n2drchj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.padillarenato.cazarpatos",
+            "certificate_hash": "240b29b6d3462aeed282171e153330bb972978ba"
+          }
+        },
         {
           "client_id": "799894179259-fi4lneqljp766ldbnbhobtfoga6tc69l.apps.googleusercontent.com",
           "client_type": 3

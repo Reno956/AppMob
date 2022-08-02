@@ -7,11 +7,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.CountDownTimer
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -36,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         //Obtener el usuario de pantalla login
         val extras = intent.extras ?: return
         val usuario = extras.getString(EXTRA_LOGIN) ?: "Unknown"
+        //usuario = usuario.substringBefore("@")
         val ind = subUser(usuario)
         val newUser = usuario.subSequence(0,ind)
         textViewUsuario.setText(newUser)
@@ -60,6 +65,74 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun procesarPuntajePatosCazados(nombreJugador:String, patosCazados:Int){
+        val jugador = Jugador(nombreJugador,patosCazados)
+        //Trata de obtener id del documento del ranking específico,
+        // si lo obtiene lo actualiza, caso contrario lo crea
+        val db = Firebase.firestore
+        db.collection("Ranking")
+            .whereEqualTo("usuario", jugador.usuario)
+            .get()
+            .addOnSuccessListener { documents ->
+                if(documents!= null &&
+                    documents.documents != null &&
+                    documents.documents.count()>0
+                ){
+                    val idDocumento = documents.documents.get(0).id
+                    actualizarPuntajeJugador(idDocumento, jugador)
+                }
+                else{
+                    ingresarPuntajeJugador(jugador)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w(EXTRA_LOGIN, "Error getting documents", exception)
+                Toast.makeText(this, "Error al obtener datos de jugador", Toast.LENGTH_LONG).show()
+            }
+    }
+
+    fun ingresarPuntajeJugador(jugador:Jugador){
+        val db = Firebase.firestore
+        db.collection("Ranking")
+            .add(jugador)
+            .addOnSuccessListener { documentReference ->
+                Toast.makeText(this,"Puntaje usuario ingresado exitosamente", Toast.LENGTH_LONG).show()
+            }
+            .addOnFailureListener { exception ->
+                Log.w(EXTRA_LOGIN, "Error adding document", exception)
+                Toast.makeText(this,"Error al ingresar el puntaje", Toast.LENGTH_LONG).show()
+            }
+    }
+
+    fun actualizarPuntajeJugador(idDocumento:String, jugador:Jugador){
+        val db = Firebase.firestore
+        db.collection("Ranking")
+            .document(idDocumento)
+            //.update(contactoHashMap)
+            .set(jugador) //otra forma de actualizar
+            .addOnSuccessListener {
+                Toast.makeText(this,"Puntaje de usuario actualizado exitosamente", Toast.LENGTH_LONG).show()
+            }
+            .addOnFailureListener { exception ->
+                Log.w(EXTRA_LOGIN, "Error updating document", exception)
+                Toast.makeText(this,"Error al actualizar el puntaje" , Toast.LENGTH_LONG).show()
+            }
+    }
+
+    fun eliminarPuntajeJugador(idDocumentoSeleccionado:String){
+        val db = Firebase.firestore
+        db.collection("Ranking")
+            .document(idDocumentoSeleccionado)
+            .delete()
+            .addOnSuccessListener {
+                Toast.makeText(this,"Puntaje de usuario eliminado exitosamente", Toast.LENGTH_LONG).show()
+            }
+            .addOnFailureListener { exception ->
+                Log.w(EXTRA_LOGIN, "Error deleting document", exception)
+                Toast.makeText(this,"Error al eliminar el puntaje" , Toast.LENGTH_LONG).show()
+            }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -77,8 +150,8 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
             R.id.action_settings3 -> {
-                finish()
-
+                val intent = Intent(this, RankingActivity::class.java)
+                startActivity(intent)
                 return true
             }
             else -> super.onOptionsItemSelected(item)
@@ -129,7 +202,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun inicializarCuentaRegresiva() {
-        contadorTiempo.start()
+        //contadorTiempo.start()
+        object : CountDownTimer(10000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val segundosRestantes = millisUntilFinished / 1000
+                textViewTiempo.setText("${segundosRestantes}s")
+            }
+            override fun onFinish() {
+                textViewTiempo.setText("0s")
+                gameOver = true
+                mostrarDialogoGameOver()
+                val nombreJugador = textViewUsuario.text.toString()
+                val patosCazados = textViewContador.text.toString()
+                procesarPuntajePatosCazados(nombreJugador, patosCazados.toInt())
+            }
+        }.start()
+
     }
 
     private fun mostrarDialogoGameOver() {
