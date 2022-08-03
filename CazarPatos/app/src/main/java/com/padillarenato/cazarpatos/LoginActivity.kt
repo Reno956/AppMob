@@ -24,6 +24,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import java.util.regex.Pattern
 
 
@@ -37,6 +39,7 @@ class LoginActivity : AppCompatActivity() {
     lateinit var checkBoxRecordarme: CheckBox
     lateinit var mediaPlayer: MediaPlayer
     private lateinit var auth: FirebaseAuth
+    private lateinit var storage: FirebaseStorage
     private val REQ_ONE_TAP = 2  // Can be any integer unique to the Activity
     private var showOneTapUI = true
     private lateinit var oneTapClient: SignInClient
@@ -87,7 +90,8 @@ class LoginActivity : AppCompatActivity() {
             }*/
         // Initialize Firebase Auth
         auth = Firebase.auth
-
+        // Initialize Firebase Storage
+        storage = Firebase.storage
         LeerDatosDePreferencias()
 
         //Eventos clic

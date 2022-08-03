@@ -6,7 +6,11 @@ import android.util.Log
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -55,5 +59,29 @@ class RankingActivity : AppCompatActivity() {
 
     }
 
-    
+    fun consultarPuntajeJugadoresRTDB(){
+        // Write a message to the database
+        val database = Firebase.database
+        val postListener = object : ValueEventListener{
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                TODO("Not yet implemented")
+                if(dataSnapshot.exists() &&
+                    dataSnapshot.child("Ranking").exists() &&
+                    dataSnapshot.child("Ranking").childrenCount > 0)
+                {
+                    var jugadores = ArrayList<Jugador>()
+                    for(player in dataSnapshot.child("Ranking").children){
+                        jugadores.add(player.getValue<Jugador>() as Jugador)
+                    }
+                    val recyclerViewRanking: RecyclerView = findViewById(R.id.recyclerViewRanking)
+                    recyclerViewRanking.adapter = RankingAdapter(jugadores)
+                }
+            }
+
+            override fun onCancelled(databadeError: DatabaseError) {
+                Log.w(EXTRA_LOGIN,"LoadPost:onCancelled",databadeError.toException())
+            }
+        }
+        //database.addValueEventListener(postListener)
+    }
 }
