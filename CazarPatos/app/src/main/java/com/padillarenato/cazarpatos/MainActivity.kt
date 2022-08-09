@@ -14,6 +14,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.*
@@ -23,10 +28,13 @@ class MainActivity : AppCompatActivity() {
     lateinit var textViewContador: TextView
     lateinit var textViewTiempo: TextView
     lateinit var imageViewPato: ImageView
+    private var mediaPlayer: MediaPlayer? = null
+    lateinit var  mAdView: AdView
     var contador = 0
     var anchoPantalla = 0
     var alturaPantalla = 0
     var gameOver = false
+    private lateinit var database: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +44,16 @@ class MainActivity : AppCompatActivity() {
         textViewContador = findViewById(R.id.textViewContador)
         textViewTiempo = findViewById(R.id.textViewTiempo)
         imageViewPato = findViewById(R.id.imageViewPato)
+        mediaPlayer = MediaPlayer.create(this, R.raw.gunshot)
+        database = Firebase.database.reference
+        MobileAds.initialize(this){}
+
+        //Ads Inicializacion
+        mAdView = findViewById(R.id.adView)
+        //mAdView.adUnitId = "ca-app-pub-3940256099942544/6300978111"
+        //mAdView.adSize = "BANNER"
+        val adRequest = AdRequest.Builder().build()
+        mAdView.loadAd(adRequest)
 
         //Obtener el usuario de pantalla login
         val extras = intent.extras ?: return
@@ -53,15 +71,21 @@ class MainActivity : AppCompatActivity() {
 
         //Evento clic sobre la imagen del pato
         imageViewPato.setOnClickListener {
+            if (gameOver) return@setOnClickListener
             contador++
-            MediaPlayer.create(this, R.raw.gunshot).start()
+            if (! mediaPlayer!!.isPlaying){
+                mediaPlayer?.start()
+            }
             textViewContador.setText(contador.toString())
             imageViewPato.setImageResource(R.drawable.duck_clicked)
             //Evento que se ejecuta luego de 500 milisegundos
             Handler().postDelayed(Runnable {
                 imageViewPato.setImageResource(R.drawable.duck)
                 moverPato()
-            }, 500)
+                mediaPlayer?.pause()
+                mediaPlayer?.seekTo(0)
+            }, 600)
+
         }
     }
 
@@ -89,6 +113,12 @@ class MainActivity : AppCompatActivity() {
                 Log.w(EXTRA_LOGIN, "Error getting documents", exception)
                 Toast.makeText(this, "Error al obtener datos de jugador", Toast.LENGTH_LONG).show()
             }
+    }
+
+    fun procesarPuntajePatosCazadosRTDB(nombreJugador: String, patosCazados: Int){
+        val idJugador = nombreJugador.replace('.', '_')
+        val jugador = Jugador(nombreJugador,patosCazados)
+        database.child("Ranking").child(idJugador).setValue(jugador)
     }
 
     fun ingresarPuntajeJugador(jugador:Jugador){
@@ -198,26 +228,16 @@ class MainActivity : AppCompatActivity() {
             textViewTiempo.setText("0s")
             gameOver = true
             mostrarDialogoGameOver()
+            val nombreJugador = textViewUsuario.text.toString()
+            val patosCazados = textViewContador.text.toString()
+            procesarPuntajePatosCazados(nombreJugador, patosCazados.toInt())//Firestore
+            //procesarPuntajePatosCazadosRTDB(nombreJugador, patosCazados.toInt()) //Realtime Database
+
         }
     }
 
     private fun inicializarCuentaRegresiva() {
-        //contadorTiempo.start()
-        object : CountDownTimer(10000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                val segundosRestantes = millisUntilFinished / 1000
-                textViewTiempo.setText("${segundosRestantes}s")
-            }
-            override fun onFinish() {
-                textViewTiempo.setText("0s")
-                gameOver = true
-                mostrarDialogoGameOver()
-                val nombreJugador = textViewUsuario.text.toString()
-                val patosCazados = textViewContador.text.toString()
-                procesarPuntajePatosCazados(nombreJugador, patosCazados.toInt())
-            }
-        }.start()
-
+        contadorTiempo.start()
     }
 
     private fun mostrarDialogoGameOver() {
@@ -247,6 +267,20 @@ class MainActivity : AppCompatActivity() {
         textViewContador.setText(contador.toString())
         moverPato()
         inicializarCuentaRegresiva()
+    }
+
+    override fun onStop() {
+        Log.w(EXTRA_LOGIN, "Play canceled")
+        contadorTiempo.cancel()
+        textViewTiempo.text = "0s"
+        gameOver = true
+        mediaPlayer?.stop()
+        super.onStop()
+    }
+    
+    override fun onDestroy() {
+        mediaPlayer?.release()
+        super.onDestroy()
     }
 
 }

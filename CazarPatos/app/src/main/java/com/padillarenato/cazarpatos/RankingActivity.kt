@@ -1,5 +1,6 @@
 package com.padillarenato.cazarpatos
 
+import android.content.ContentValues
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -31,7 +32,14 @@ class RankingActivity : AppCompatActivity() {
         recyclerViewRanking.adapter = RankingAdapter(jugadores);
         recyclerViewRanking.setHasFixedSize(true);*/
         consultarPuntajeJugadores()
+        //consultarPuntajeJugadoresRTDB()
     }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return super.onSupportNavigateUp()
+    }
+
     fun consultarPuntajeJugadores(){
         val db = Firebase.firestore
         db.collection("Ranking")
@@ -61,27 +69,26 @@ class RankingActivity : AppCompatActivity() {
 
     fun consultarPuntajeJugadoresRTDB(){
         // Write a message to the database
-        val database = Firebase.database
-        val postListener = object : ValueEventListener{
+        val database = Firebase.database.reference
+        val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                TODO("Not yet implemented")
-                if(dataSnapshot.exists() &&
-                    dataSnapshot.child("Ranking").exists() &&
-                    dataSnapshot.child("Ranking").childrenCount > 0)
-                {
-                    var jugadores = ArrayList<Jugador>()
-                    for(player in dataSnapshot.child("Ranking").children){
-                        jugadores.add(player.getValue<Jugador>() as Jugador)
+                if (dataSnapshot.exists() && dataSnapshot.child("Ranking").exists()){
+                    val players = ArrayList<Jugador>()
+                    for (player in dataSnapshot.child("Ranking").children){
+                        players.add(player.getValue<Jugador>() as Jugador)
                     }
-                    val recyclerViewRanking: RecyclerView = findViewById(R.id.recyclerViewRanking)
-                    recyclerViewRanking.adapter = RankingAdapter(jugadores)
+                    players.sortByDescending { it.patosCazados }
+                    //Poblar en RecyclerView información usando mi adaptador
+                    val recyclerViewRanking: RecyclerView = findViewById(R.id.recyclerViewRanking);
+                    recyclerViewRanking.layoutManager = LinearLayoutManager(this@RankingActivity);
+                    recyclerViewRanking.adapter = RankingAdapter(players);
+                    recyclerViewRanking.setHasFixedSize(true);
                 }
             }
-
-            override fun onCancelled(databadeError: DatabaseError) {
-                Log.w(EXTRA_LOGIN,"LoadPost:onCancelled",databadeError.toException())
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
             }
         }
-        //database.addValueEventListener(postListener)
+        database.addValueEventListener(postListener)
     }
 }

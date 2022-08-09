@@ -4,11 +4,13 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.IntentSender
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -41,9 +43,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var storage: FirebaseStorage
     private val REQ_ONE_TAP = 2  // Can be any integer unique to the Activity
-    private var showOneTapUI = true
-    private lateinit var oneTapClient: SignInClient
-    private lateinit var signInRequest: BeginSignInRequest
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,42 +56,20 @@ class LoginActivity : AppCompatActivity() {
         buttonNewUser = findViewById(R.id.buttonNewUser)
         buttonGoogle = findViewById(R.id.imageButtomGoogle)
         checkBoxRecordarme = findViewById(R.id.checkBoxRecordarme)
-        /*oneTapClient = Identity.getSignInClient(this)
-        signInRequest = BeginSignInRequest.builder()
-            .setPasswordRequestOptions(BeginSignInRequest.PasswordRequestOptions.builder()
-                .setSupported(true)
-                .build())
-            .setGoogleIdTokenRequestOptions(
-                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                    .setSupported(true)
-                    // Your server's client ID, not your Android client ID.
-                    .setServerClientId(getString(R.string.default_web_client_id))
-                    // Only show accounts previously used to sign in.
-                    .setFilterByAuthorizedAccounts(true)
-                    .build())
-            // Automatically sign in when exactly one credential is retrieved.
-            .setAutoSelectEnabled(true)
-            .build()
 
-        oneTapClient.beginSignIn(signInRequest)
-            .addOnSuccessListener(this) { result ->
-                try {
-                    startIntentSenderForResult(
-                        result.pendingIntent.intentSender, REQ_ONE_TAP,
-                        null, 0, 0, 0, null)
-                } catch (e: IntentSender.SendIntentException) {
-                    Log.e(TAG, "Couldn't start One Tap UI: ${e.localizedMessage}")
-                }
-            }
-            .addOnFailureListener(this) { e ->
-                // No saved credentials found. Launch the One Tap sign-up flow, or
-                // do nothing and continue presenting the signed-out UI.
-                Log.d(TAG, e.localizedMessage)
-            }*/
         // Initialize Firebase Auth
         auth = Firebase.auth
         // Initialize Firebase Storage
         storage = Firebase.storage
+
+        var storageReference = Firebase.storage.reference
+        var imagePathRefrerence = storageReference.child("title.png")
+        val imageViewLogo = findViewById<ImageView>(R.id.imageViewLogo)
+        Glide.with(this)
+            //.load("https://firebasestorage.googleapis.com/v0/b/proyectocazarpatos-860fe.appspot.com/o/duck_hunt_logo.png?alt=media&token=364b9f3e-9d11-4076-8334-af4fe011888a")
+            .load(imagePathRefrerence)
+            .into(imageViewLogo)
+
         LeerDatosDePreferencias()
 
         //Eventos clic
@@ -116,17 +94,7 @@ class LoginActivity : AppCompatActivity() {
             SignUpNewUser(email, clave)
         }
         buttonGoogle.setOnClickListener {
-            println("aaaa")
-            /*signInRequest = BeginSignInRequest.builder()
-                .setGoogleIdTokenRequestOptions(
-                    BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                        .setSupported(true)
-                        // Your server's client ID, not your Android client ID.
-                        .setServerClientId(getString(R.string.default_web_client_id))
-                        // Only show accounts previously used to sign in.
-                        .setFilterByAuthorizedAccounts(true)
-                        .build())
-                .build()*/
+
             //onActivityResult()
             val googleConf: GoogleSignInOptions =
                 GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -137,7 +105,8 @@ class LoginActivity : AppCompatActivity() {
             googleClient.signOut()
             startActivityForResult(googleClient.signInIntent,REQ_ONE_TAP)
         }
-        mediaPlayer=MediaPlayer.create(this, R.raw.title_screen)
+        mediaPlayer = MediaPlayer.create(this, R.raw.title_screen)
+        //mediaPlayer = MediaPlayer.create(this, Uri.parse("https://firebasestorage.googleapis.com/v0/b/proyectocazarpatos-860fe.appspot.com/o/title_screen.mp3?alt=media&token=4d626e2d-f343-4b31-984f-0c3fe5bd5812"))
         mediaPlayer.start()
     }
 
@@ -151,18 +120,7 @@ class LoginActivity : AppCompatActivity() {
                 if(account != null){
                     val credential: AuthCredential = GoogleAuthProvider.getCredential(account.idToken,null)
                     FirebaseAuth.getInstance().signInWithCredential(credential)
-                    /*if (task.isSuccessful) {
-                        Log.d(EXTRA_LOGIN, "signInWithEmail:success")
-                        //Si pasa validación de datos requeridos, ir a pantalla principal
-                        val intencion = Intent(this, MainActivity::class.java)
-                        intencion.putExtra(EXTRA_LOGIN, auth.currentUser!!.email)
-                        startActivity(intencion)
-                        //finish()
-                    } else {
-                        Log.w(EXTRA_LOGIN, "signInWithEmail:failure", task.exception)
-                        Toast.makeText(baseContext, task.exception!!.message,
-                            Toast.LENGTH_SHORT).show()
-                    }*/
+
                     Log.d(EXTRA_LOGIN, "signInWithEmail:success")
                     //Si pasa validación de datos requeridos, ir a pantalla principal
                     val intencion = Intent(this, MainActivity::class.java)
@@ -173,62 +131,6 @@ class LoginActivity : AppCompatActivity() {
 
             }
         }
-        /*when (requestCode) {
-            REQ_ONE_TAP -> {
-                try {
-                    val credential = oneTapClient.getSignInCredentialFromIntent(data)
-                    val idToken = credential.googleIdToken
-                    val username = credential.id
-                    val password = credential.password
-                    when {
-                        idToken != null -> {
-                            // Got an ID token from Google. Use it to authenticate
-                            // with your backend.
-                            //Log.d(TAG, "Got ID token.")
-                            val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
-                            auth.signInWithCredential(firebaseCredential)
-                                .addOnCompleteListener(this) { task ->
-                                    if (task.isSuccessful) {
-                                        // Sign in success, update UI with the signed-in user's information
-                                        Log.d(TAG, "signInWithCredential:success")
-                                        val user = auth.currentUser
-                                        //updateUI(user)
-                                    } else {
-                                        // If sign in fails, display a message to the user.
-                                        Log.w(TAG, "signInWithCredential:failure", task.exception)
-                                        //updateUI(null)
-                                    }
-                                }
-                        }
-                        password != null -> {
-                            // Got a saved username and password. Use them to authenticate
-                            // with your backend.
-                            Log.d(TAG, "Got password.")
-                        }
-                        else -> {
-                            // Shouldn't happen.
-                            Log.d(TAG, "No ID token or password!")
-                        }
-                    }
-                } catch (e: ApiException) {
-                    when (e.statusCode) {
-                        CommonStatusCodes.CANCELED -> {
-                            Log.d(TAG, "One-tap dialog was closed.")
-                            // Don't re-prompt the user.
-                            showOneTapUI = false
-                        }
-                        CommonStatusCodes.NETWORK_ERROR -> {
-                            Log.d(TAG, "One-tap encountered a network error.")
-                            // Try again or just ignore.
-                        }
-                        else -> {
-                            Log.d(TAG, "Couldn't get credential from result." +
-                                    " (${e.localizedMessage})")
-                        }
-                    }
-                }
-            }
-        }*/
     }
 
     fun SignUpNewUser(email:String, password:String){
