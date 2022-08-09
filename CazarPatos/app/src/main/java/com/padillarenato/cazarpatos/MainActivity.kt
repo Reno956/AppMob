@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
         //Ads Inicializacion
         mAdView = findViewById(R.id.adView)
-        //mAdView.adUnitId = "ca-app-pub-3940256099942544/6300978111"
+        //mAdView.adUnitId = "ca-app-pub-5659945283466171/3492656630"
         //mAdView.adSize = "BANNER"
         val adRequest = AdRequest.Builder().build()
         mAdView.loadAd(adRequest)

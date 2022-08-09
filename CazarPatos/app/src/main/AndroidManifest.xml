@@ -20,6 +20,7 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-9624227872779318~8922827426"/>
+            <!--android:value="ca-app-pub-5659945283466171~5955168445"-->
         <activity
             android:name=".LoginActivity"
             android:exported="true">

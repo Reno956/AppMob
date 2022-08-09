@@ -77,5 +77,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+        <!--ads:adUnitId="ca-app-pub-5659945283466171/3492656630"-->
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
