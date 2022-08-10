@@ -14,9 +14,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.*
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
@@ -30,6 +30,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var imageViewPato: ImageView
     private var mediaPlayer: MediaPlayer? = null
     lateinit var  mAdView: AdView
+    private var interstitialAd: InterstitialAd? = null
+    private final var TAG = "MainActivity"
     var contador = 0
     var anchoPantalla = 0
     var alturaPantalla = 0
@@ -54,6 +56,8 @@ class MainActivity : AppCompatActivity() {
         //mAdView.adSize = "BANNER"
         val adRequest = AdRequest.Builder().build()
         mAdView.loadAd(adRequest)
+
+        loadInterstitialAd()
 
         //Obtener el usuario de pantalla login
         val extras = intent.extras ?: return
@@ -241,6 +245,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun mostrarDialogoGameOver() {
+        showInterstitial()
         val builder = AlertDialog.Builder(this)
         builder
             .setMessage("Felicidades!!\nHas conseguido cazar $contador patos")
@@ -258,6 +263,70 @@ class MainActivity : AppCompatActivity() {
                     startActivity(intencion)
                 })
         builder.create().show()
+    }
+
+    private fun loadInterstitialAd() {
+        val adRequest = AdRequest.Builder().build()
+        InterstitialAd.load(this, "ca-app-pub-3940256099942544/1033173712", adRequest,
+            object : InterstitialAdLoadCallback() {
+                override fun onAdLoaded(ad: InterstitialAd) {
+                    // The interstitialAd reference will be null until
+                    // an ad is loaded.
+                    interstitialAd = ad
+                    /*Toast.makeText(this@MainActivity, "onAdLoaded()", Toast.LENGTH_SHORT)
+                        .show()*/
+                    ad.setFullScreenContentCallback(
+                        object : FullScreenContentCallback() {
+                            override fun onAdDismissedFullScreenContent() {
+                                // Called when fullscreen content is dismissed.
+                                // Make sure to set your reference to null so you don't
+                                // show it a second time.
+                                interstitialAd = null
+                                Log.d(TAG, "The ad was dismissed.")
+                            }
+
+                            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                                // Called when fullscreen content failed to show.
+                                // Make sure to set your reference to null so you don't
+                                // show it a second time.
+                                interstitialAd = null
+                                Log.d(TAG, "The ad failed to show.")
+                            }
+
+                            override fun onAdShowedFullScreenContent() {
+                                // Called when fullscreen content is shown.
+                                Log.d(TAG, "The ad was shown.")
+                            }
+                        })
+                }
+
+                override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                    // Handle the error
+                    Log.i(TAG, loadAdError.message)
+                    interstitialAd = null
+                    val error: String = String.format(
+                        Locale.ENGLISH,
+                        "domain: %s, code: %d, message: %s",
+                        loadAdError.domain,
+                        loadAdError.code,
+                        loadAdError.message
+                    )
+                    Toast.makeText(
+                        this@MainActivity,
+                        "onAdFailedToLoad() with error: $error", Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
+            })
+    }
+
+    private fun showInterstitial() {
+        // Show the ad if it"s ready. Otherwise toast and reload the ad.
+        if (interstitialAd != null) {
+            interstitialAd!!.show(this)
+        } else {
+            Toast.makeText(this, "Ad did not load", Toast.LENGTH_SHORT).show()
+        }
     }
 
     fun reiniciarJuego(){
