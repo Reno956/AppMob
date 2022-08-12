@@ -107,7 +107,13 @@ class MainActivity : AppCompatActivity() {
                     documents.documents.count()>0
                 ){
                     val idDocumento = documents.documents.get(0).id
-                    actualizarPuntajeJugador(idDocumento, jugador)
+                    val jugadorLeido = documents.documents.get(0).toObject(Jugador::class.java)
+                    if(jugadorLeido!!.patosCazados < patosCazados){
+                        Log.w(EXTRA_LOGIN, "Actualizado, puntaje mayor")
+                        actualizarPuntajeJugador(idDocumento, jugador)
+                    }else{
+                        Log.w(EXTRA_LOGIN, "No actualizado, puntaje menor")
+                    }
                 }
                 else{
                     ingresarPuntajeJugador(jugador)
