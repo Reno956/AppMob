@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">PadillaRenatoEx2</string>
+    <string name="question_1">¿León, puma o gato doméstico?</string>
+    <string name="question_2">¿Castor, chinchilla o capibara?</string>
+    <string name="question_3">¿Alpaca, camello o burro?</string>
+    <string name="question_4">¿León marino, nutria o hurón?</string>
+    <string name="question_5">¿Oso hormiguero, elefante o tapir?</string>
+    <string name="question_6">¿Zorrillo, mapache o tejón?</string>
+    <string name="question_7">¿Oso, panda o koala?</string>
+    <string name="question_8">¿Caballo, alce o cebra?</string>
+    <string name="question_1_content">Puma</string>
+    <string name="question_2_content">Capibara</string>
+    <string name="question_3_content">Alpaca</string>
+    <string name="question_4_content">Nutria</string>
+    <string name="question_5_content">Tapir</string>
+    <string name="question_6_content">Mapache</string>
+    <string name="question_7_content">Koala</string>
+    <string name="question_8_content">Cebra</string>
+    <string name="response">Haz clic en la imagen para ver la respuesta</string>
+    <string name="button_next">Siguiente</string>
+    <string name="button_back">Anterior</string>
+    <string name="game">Juego de adivinanza</string>
+
+</resources>
